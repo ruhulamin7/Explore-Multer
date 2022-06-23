@@ -8,13 +8,30 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-const upload = multer({ dest: path.join(__dirname, './assets/') });
+const UPLOAD_DEST = path.join(__dirname, '/uploads');
+const upload = multer({
+  dest: UPLOAD_DEST,
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter: function (req, file, cb) {
+    if (
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/jpeg'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type'));
+    }
+  },
+});
 // -----------------upload single file with single input field
 //
-// app.post('/form-data', upload.single('profilePhoto'), (req, res, next) => {
-//   console.log(req.file);
-// res.send('File Uploaded Successfully');
-// });
+app.post('/form-data', upload.single('profilePhoto'), (req, res, next) => {
+  console.log(req.file);
+  res.send('File Uploaded Successfully');
+});
 // ----------upload multiple files with single input field
 //
 // app.post('/form-data', upload.array('profilePhoto', 2), (req, res, next) => {
