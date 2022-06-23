@@ -12,7 +12,7 @@ const UPLOAD_DEST = path.join(__dirname, '/uploads');
 const upload = multer({
   dest: UPLOAD_DEST,
   limits: {
-    fileSize: 1000000,
+    fileSize: 1124000,
   },
   fileFilter: function (req, file, cb) {
     if (
