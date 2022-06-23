@@ -9,8 +9,26 @@ app.get('/', (req, res, next) => {
 });
 
 const UPLOAD_DEST = path.join(__dirname, '/uploads');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOAD_DEST);
+  },
+  filename: (req, file, cb) => {
+    console.log(file);
+    const fileExt = path.extname(file?.originalname);
+    const fileName = file.originalname
+      .replace(fileExt, '')
+      .toLowerCase()
+      .split(' ')
+      .join('-')
+      .concat('-', Date.now(), fileExt);
+
+    console.log(fileName);
+    cb(null, fileName);
+  },
+});
 const upload = multer({
-  dest: UPLOAD_DEST,
+  storage,
   limits: {
     fileSize: 1124000,
   },
@@ -28,10 +46,10 @@ const upload = multer({
 });
 // -----------------upload single file with single input field
 //
-app.post('/form-data', upload.single('profilePhoto'), (req, res, next) => {
-  console.log(req.file);
-  res.send('File Uploaded Successfully');
-});
+// app.post('/form-data', upload.single('profilePhoto'), (req, res, next) => {
+//   console.log('form-data : ', req.file);
+//   res.send('File Uploaded Successfully');
+// });
 // ----------upload multiple files with single input field
 //
 // app.post('/form-data', upload.array('profilePhoto', 2), (req, res, next) => {
@@ -83,10 +101,10 @@ app.post('/form-data', upload.single('profilePhoto'), (req, res, next) => {
 
 //----------for any types of files you want to upload---------------
 //
-// app.post('/form-data', upload.any(), (req, res, next) => {
-//   console.log(req.body);
-//   console.log(req.files);
-//   res.send('File Uploaded Successfully');
-// });
+app.post('/form-data', upload.any(), (req, res, next) => {
+  console.log(req.body);
+  console.log(req.files);
+  res.send('File Uploaded Successfully');
+});
 
 app.listen(5000, () => console.log('server is running on port 5000'));
