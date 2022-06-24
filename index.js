@@ -14,16 +14,13 @@ const storage = multer.diskStorage({
     cb(null, UPLOAD_DEST);
   },
   filename: (req, file, cb) => {
-    console.log(file);
     const fileExt = path.extname(file?.originalname);
     const fileName = file.originalname
-      .replace(fileExt, '')
       .toLowerCase()
+      .replace(fileExt, '')
       .split(' ')
       .join('-')
       .concat('-', Date.now(), fileExt);
-
-    console.log(fileName);
     cb(null, fileName);
   },
 });
